@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "chromadb>=1.0.6",
+    "click>=8.1.8",
     "langchain>=0.3.24",
     "langchain-community>=0.3.22",
     "langchain-ollama>=0.3.2",
@@ -14,5 +15,17 @@ dependencies = [
     "pyarrow>=19.0.1",
 ]
 
+[project.scripts]
+lc-app = "lc_app.app:run"
+
 [dependency-groups]
 dev = ["ruff>=0.11.6"]
+
+[tool.pdm.build]
+includes = [
+    "lc_app",
+]
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
