@@ -5,11 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run App",
+            "name": "Run App: Embed",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/run.py",
+            "args": [
+                "embed",
+                "--doc",
+                "/home/gurbakhshish/dev/src/personal/lc_app/data/dummy_market_data.csv",
+                "--db-path",
+                "/home/gurbakhshish/dev/src/personal/lc_app/.ignore/vectordb"
+            ],
             "console": "integratedTerminal"
-        }
+        },
+        {
+            "name": "Run App: Ask",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "ask",
+                "--query",
+                "What is the lowest close price?",
+                "--db-path",
+                "/home/gurbakhshish/dev/src/personal/lc_app/.ignore/vectordb"
+            ],
+            "console": "integratedTerminal"
+        },
     ]
 }
