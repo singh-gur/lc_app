@@ -12,4 +12,4 @@ def cli():
 def run():
     """Run the CLI application."""
     add_commands(cli)
-    cli(prog_name="lc_app", standalone_mode=False)
+    cli(prog_name="lc_app")

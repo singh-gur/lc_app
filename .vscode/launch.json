@@ -16,6 +16,7 @@
                 "--db-path",
                 "/home/gurbakhshish/dev/src/personal/lc_app/.ignore/vectordb"
             ],
+            "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
         },
         {
@@ -27,9 +28,8 @@
                 "ask",
                 "--query",
                 "What is the lowest close price?",
-                "--db-path",
-                "/home/gurbakhshish/dev/src/personal/lc_app/.ignore/vectordb"
             ],
+            "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
         },
     ]
