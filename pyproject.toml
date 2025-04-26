@@ -10,6 +10,7 @@ dependencies = [
     "langchain-chroma>=0.2.3",
     "langchain-community>=0.3.22",
     "langchain-ollama>=0.3.2",
+    "langfuse>=2.60.3",
     "ollama>=0.4.8",
     "pandas>=2.2.3",
     "pyarrow>=19.0.1",

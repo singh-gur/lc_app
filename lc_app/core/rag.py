@@ -4,7 +4,9 @@ from langchain.chains import RetrievalQA
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import CSVLoader
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langfuse.callback import CallbackHandler
 
+DEFAULT_LANFUSE_HOST = "https://langfuse.gsingh.io"  # Langfuse server URL
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"  # Ollama server URL
 DEFAULT_EMBEDDING_MODEL = "nomic-embed-text"  # Default embedding model
 DEFAULT_RAG_MODEL = "deepseek-r1:14b"  # Default RAG model
@@ -72,6 +74,25 @@ def run_rag_chain(
         return_source_documents=True,
     )
 
+    langfuse_callback = get_langfuse_callback_handler()
     """Run the RAG chain with the given query."""
-    response = rag_chain.invoke(query)
+    response = rag_chain.invoke(query, config={"callbacks": [langfuse_callback]})
     return response["result"], response["source_documents"]
+
+
+def get_langfuse_callback_handler() -> CallbackHandler:
+    """Get the Langfuse callback handler for tracking RAG chain runs."""
+    langfuse_host = getenv("LANGFUSE_HOST", DEFAULT_LANFUSE_HOST)
+
+    public_key = getenv("LANGFUSE_PUBLIC_KEY")
+    secret_key = getenv("LANGFUSE_SECRET_KEY")
+    if public_key is None or secret_key is None:
+        raise ValueError(
+            "LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY must be set in environment variables."
+        )
+
+    return CallbackHandler(
+        public_key=public_key,
+        secret_key=secret_key,
+        host=langfuse_host,
+    )
