@@ -75,21 +75,22 @@ def run_rag_chain(
     )
 
     langfuse_callback = get_langfuse_callback_handler()
+    config = {}
+    if langfuse_callback is not None:
+        config["callbacks"] = [langfuse_callback]
     """Run the RAG chain with the given query."""
-    response = rag_chain.invoke(query, config={"callbacks": [langfuse_callback]})
+    response = rag_chain.invoke(query, config=config)
     return response["result"], response["source_documents"]
 
 
-def get_langfuse_callback_handler() -> CallbackHandler:
+def get_langfuse_callback_handler() -> CallbackHandler | None:
     """Get the Langfuse callback handler for tracking RAG chain runs."""
     langfuse_host = getenv("LANGFUSE_HOST", DEFAULT_LANFUSE_HOST)
 
     public_key = getenv("LANGFUSE_PUBLIC_KEY")
     secret_key = getenv("LANGFUSE_SECRET_KEY")
     if public_key is None or secret_key is None:
-        raise ValueError(
-            "LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY must be set in environment variables."
-        )
+        return None
 
     return CallbackHandler(
         public_key=public_key,
