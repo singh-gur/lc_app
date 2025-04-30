@@ -19,7 +19,7 @@ async def scrape_webpage(url: str, wait_for: str) -> str:
 async def scrape_news_articles_for_tickers(ticker: str) -> list[dict[str, Any]]:
     """scrape news articles using playwright and return a list of dictionaries with the article title, url, and content."""
     content = await scrape_webpage(
-        f"https://finance.yahoo.com/quote/{ticker}/news/",
+        f"https://finance.yahoo.com/quote/{ticker}/latest-news/",
         wait_for="div.news-stream",
     )
     if not content:
