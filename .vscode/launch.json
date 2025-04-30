@@ -11,6 +11,7 @@
             "program": "${workspaceFolder}/run.py",
             "args": [
                 "embed",
+                "raw",
                 "--doc",
                 "/home/gurbakhshish/dev/src/personal/lc_app/data/dummy_market_data.csv",
             ],
@@ -24,10 +25,25 @@
             "program": "${workspaceFolder}/run.py",
             "args": [
                 "embed",
+                "raw",
                 "--doctype",
                 "web",
                 "--url",
                 "${input:url}",
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run App: Embed Tickers",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "embed",
+                "ticker-news",
+                "--ticker",
+                "AAPL",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
@@ -63,5 +79,5 @@
             "id": "url",
             "type": "promptString",
             "description": "Enter the url to scrape"
-    ]
-}
+        ]
+    }

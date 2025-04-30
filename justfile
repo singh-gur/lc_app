@@ -1,6 +1,7 @@
 install-deps:
     # Install dependencies
     uv sync
+    .venv/bin/playwright install
 
 upgrade-deps:
     # Upgrade dependencies
