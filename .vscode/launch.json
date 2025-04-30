@@ -43,7 +43,7 @@
                 "embed",
                 "ticker-news",
                 "--ticker",
-                "AAPL",
+                "${input:ticker}",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
@@ -79,5 +79,12 @@
             "id": "url",
             "type": "promptString",
             "description": "Enter the url to scrape"
-        ]
-    }
+        },
+        {
+            "id": "ticker",
+            "type": "promptString",
+            "description": "Enter the ticker to scrape",
+            "default": "GOOG"
+        }
+    ]
+}

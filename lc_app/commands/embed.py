@@ -6,7 +6,8 @@ from lc_app.core.rag import embed_csv_data, embed_web_data, embed_json_data
 from tempfile import NamedTemporaryFile
 from lc_app.core.scrapers.models import Article
 from lc_app.core.scrapers.yf_scraper import YahooFinanceNewsScraper
-
+from json import dumps
+from pydantic.json import pydantic_encoder
 
 @click.group()
 def embed():
@@ -109,7 +110,9 @@ def ticker_news(
         click.echo("No articles found.")
         return
     with NamedTemporaryFile(delete=False) as temp_file:
-        temp_file.write(articles)
+        temp_file.write(dumps(articles, default=pydantic_encoder).encode("utf-8"))
+        temp_file.flush()
+        temp_file.seek(0)
         temp_file_path = temp_file.name
         embed_json_data(file_path=temp_file_path, chroma_db_path=db_path, model=embed_model)
     click.echo(f"Articles embedded and stored in: {db_path}")

@@ -14,4 +14,4 @@ class NewsScraper(ABC):
 
     def sync_scrape(self) -> list[Article]:
         """Synchronously scrape news articles and return a list of dictionaries with the article title, url, and content."""
-        asyncio.run(self.scrape())
+        return asyncio.run(self.scrape())

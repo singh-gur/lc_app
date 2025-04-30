@@ -75,6 +75,7 @@ def embed_json_data(
 ) -> None:
     """Load JSON data and create embeddings using Ollama."""
 
+    #FIXME: add jq schema to parse JSON
     loader = JSONLoader(file_path)
     docs = loader.load()
 
