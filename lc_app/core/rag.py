@@ -16,7 +16,7 @@ from langfuse.callback import CallbackHandler
 DEFAULT_LANFUSE_HOST = "https://langfuse.gsingh.io"  # Langfuse server URL
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"  # Ollama server URL
 DEFAULT_EMBEDDING_MODEL = "nomic-embed-text"  # Default embedding model
-DEFAULT_RAG_MODEL = "deepseek-r1:14b"  # Default RAG model
+DEFAULT_RAG_MODEL = "deepseek-r1:7b"  # Default RAG model
 DEFAULT_CHUNK_SIZE = 1000  # Default chunk size for text splitting
 DEFAULT_CHUNK_OVERLAP = 200  # Default chunk overlap for text splitting
 DEFAULT_WEB_CLASS = "article"  # Default CSS class for web scraping
@@ -76,7 +76,7 @@ def embed_json_data(
     """Load JSON data and create embeddings using Ollama."""
 
     #FIXME: add jq schema to parse JSON
-    loader = JSONLoader(file_path)
+    loader = JSONLoader(file_path, jq_schema=".entries[]", text_content=False)
     docs = loader.load()
 
     embed_from_documents(docs, chroma_db_path, ollama_host, model)
