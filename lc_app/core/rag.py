@@ -5,8 +5,10 @@ from langchain_chroma import Chroma
 from langchain_community.document_loaders import (
     AsyncChromiumLoader,
     CSVLoader,
+    JSONLoader,
 )
 from langchain_community.document_transformers import BeautifulSoupTransformer
+from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langfuse.callback import CallbackHandler
@@ -65,6 +67,20 @@ def embed_web_data(
         Chroma.from_documents(split_docs, embeddings, persist_directory=chroma_db_path)
 
 
+def embed_json_data(
+    file_path: str,
+    chroma_db_path: str,
+    ollama_host: str | None = None,
+    model: str | None = None,
+) -> None:
+    """Load JSON data and create embeddings using Ollama."""
+
+    loader = JSONLoader(file_path)
+    docs = loader.load()
+
+    embed_from_documents(docs, chroma_db_path, ollama_host, model)
+
+
 def embed_csv_data(
     file_path: str,
     chroma_db_path: str,
@@ -73,20 +89,51 @@ def embed_csv_data(
 ) -> None:
     """Load CSV data and create embeddings using Ollama."""
 
+    loader = CSVLoader(file_path)
+    docs = loader.load()
+
+    embed_from_documents(docs, chroma_db_path, ollama_host, model)
+
+
+def embed_from_documents(
+    docs: list[Document],
+    chroma_db_path: str,
+    ollama_host: str | None = None,
+    model: str | None = None,
+) -> None:
+    """Embed documents and store them in the Chroma database."""
     if ollama_host is None:
         ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
 
     if model is None:
         model = DEFAULT_EMBEDDING_MODEL
 
-    loader = CSVLoader(file_path)
-    docs = loader.load()
-
     # Initialize Ollama embeddings
     embeddings = OllamaEmbeddings(base_url=ollama_host, model=model)
 
     # Create Chroma vector database from documents
     Chroma.from_documents(docs, embeddings, persist_directory=chroma_db_path)
+
+
+def embed_from_texts(
+    data: list[str],
+    chroma_db_path: str,
+    ollama_host: str | None = None,
+    model: str | None = None,
+) -> None:
+    """Load text data and create embeddings using Ollama."""
+
+    if ollama_host is None:
+        ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
+
+    if model is None:
+        model = DEFAULT_EMBEDDING_MODEL
+
+    # Initialize Ollama embeddings
+    embeddings = OllamaEmbeddings(base_url=ollama_host, model=model)
+
+    # Create Chroma vector database from documents
+    Chroma.from_texts(data, embeddings, persist_directory=chroma_db_path)
 
 
 def run_rag_chain(
