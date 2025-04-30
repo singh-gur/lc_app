@@ -2,15 +2,67 @@ from os import getenv
 
 from langchain.chains import RetrievalQA
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import CSVLoader
+from langchain_community.document_loaders import (
+    AsyncChromiumLoader,
+    CSVLoader,
+)
+from langchain_community.document_transformers import BeautifulSoupTransformer
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langfuse.callback import CallbackHandler
 
 DEFAULT_LANFUSE_HOST = "https://langfuse.gsingh.io"  # Langfuse server URL
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"  # Ollama server URL
 DEFAULT_EMBEDDING_MODEL = "nomic-embed-text"  # Default embedding model
 DEFAULT_RAG_MODEL = "deepseek-r1:14b"  # Default RAG model
+DEFAULT_CHUNK_SIZE = 1000  # Default chunk size for text splitting
+DEFAULT_CHUNK_OVERLAP = 200  # Default chunk overlap for text splitting
+DEFAULT_WEB_CLASS = "article"  # Default CSS class for web scraping
 # Load CSV market data with Pandas
+
+
+def embed_web_data(
+    urls: list[str],
+    chroma_db_path: str,
+    webpage_class: str | None = None,
+    ollama_host: str | None = None,
+    model: str | None = None,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+) -> None:
+    """Load web data and create embeddings using Ollama."""
+
+    if ollama_host is None:
+        ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
+
+    if model is None:
+        model = DEFAULT_EMBEDDING_MODEL
+
+    if webpage_class is None:
+        webpage_class = DEFAULT_WEB_CLASS
+
+    loader = AsyncChromiumLoader(urls)
+    html_docs = loader.load()
+
+    transformer = BeautifulSoupTransformer()
+
+    docs_transformed = transformer.transform_documents(
+        html_docs, tags_to_extract=["article"]
+    )
+
+    # Split documents into chunks
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap, add_start_index=True
+    )
+
+    split_docs = text_splitter.split_documents(docs_transformed)
+
+    # Initialize Ollama embeddings
+    embeddings = OllamaEmbeddings(base_url=ollama_host, model=model)
+
+    if split_docs:
+        # Create Chroma vector database from documents
+        Chroma.from_documents(split_docs, embeddings, persist_directory=chroma_db_path)
 
 
 def embed_csv_data(

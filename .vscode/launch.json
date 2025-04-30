@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run App: Embed",
+            "name": "Run App: Embed csv",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/run.py",
@@ -13,8 +13,21 @@
                 "embed",
                 "--doc",
                 "/home/gurbakhshish/dev/src/personal/lc_app/data/dummy_market_data.csv",
-                "--db-path",
-                "/home/gurbakhshish/dev/src/personal/lc_app/.ignore/vectordb"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run App: Embed web",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "embed",
+                "--doctype",
+                "web",
+                "--url",
+                "${input:url}",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
@@ -27,10 +40,28 @@
             "args": [
                 "ask",
                 "--query",
-                "What is the lowest close price?",
+                "${input:query}"
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
         },
+    ],
+    "inputs": [
+        {
+            "id": "dbPath",
+            "type": "promptString",
+            "description": "Enter the path to the database",
+            "default": "${workspaceFolder}/.ignore/vectordb"
+        },
+        {
+            "id": "query",
+            "type": "promptString",
+            "description": "Enter the query to ask",
+            "default": "Please brief the article from vector db"
+        },
+        {
+            "id": "url",
+            "type": "promptString",
+            "description": "Enter the url to scrape"
     ]
 }
