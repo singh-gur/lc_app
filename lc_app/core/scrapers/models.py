@@ -15,5 +15,5 @@ class Article(BaseModel):
     system: str | None = None
 
 
-class DataSet(Generic[T], BaseModel):
+class DataSet(BaseModel, Generic[T]):
     entries: list[T]
