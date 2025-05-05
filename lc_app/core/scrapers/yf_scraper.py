@@ -10,13 +10,20 @@ from lc_app.core.scrapers.scraper import NewsScraper
 class YahooFinanceNewsScraper(NewsScraper):
     """A class to scrape news articles from Yahoo Finance."""
 
-    def __init__(self, ticker: str):
+    def __init__(self, ticker: str | None = None, topic: str | None = None):
         self.ticker = ticker
+        self.topic = topic if topic else "latest-news"
+        self.base_url = "https://finance.yahoo.com"
+        if self.ticker:        
+            self.news_url = f"{self.base_url}/quote/{self.ticker}/latest-news/"
+        else:
+            self.news_url = f"{self.base_url}/topic/{self.topic}"
+
 
     async def scrape(self) -> list[Article]:
         """scrape news articles using playwright and return a list of dictionaries with the article title, url, and content."""
         content = await self.scrape_webpage(
-            f"https://finance.yahoo.com/quote/{self.ticker}/latest-news/",
+            self.news_url,
             wait_for="div.news-stream",
         )
         if not content:
@@ -43,6 +50,7 @@ class YahooFinanceNewsScraper(NewsScraper):
                     content=content,
                     source=source,
                     ticker=self.ticker,
+                    topic=self.topic,
                     date=datetime.now(),
                     published_at=published_at,
                     system="Yahoo Finance",
