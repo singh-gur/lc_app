@@ -66,9 +66,12 @@ def raw(
 
 
 @embed.command()
-@click.option("--ticker", type=str, required=True, help="Ticker symbol.")
 @click.option(
     "--db-path", type=str, required=True, help="Path to the database.", envvar="DB_PATH"
+)
+@click.option("--ticker", type=str, required=False, help="Ticker symbol.")
+@click.option(
+    "--topic", type=str, required=False, help="Topic to scrape news articles for."
 )
 @click.option(
     "--source", type=str, required=False, default="yahoo", help="Source of the data."
@@ -87,9 +90,10 @@ def raw(
     help="Ollama host URL.",
     envvar="OLLAMA_HOST",
 )
-def ticker_news(
-    ticker: str,
+def news(
     db_path: str,
+    ticker: str | None = None,
+    topic: str | None = None,
     source: str | None = "yahoo",
     embed_model: str | None = None,
     ollama_host: str | None = None,
@@ -100,7 +104,7 @@ def ticker_news(
     articles: list[Article] = []
     if source == "yahoo":
         click.echo("Scraping news articles from Yahoo Finance.")
-        scraper = YahooFinanceNewsScraper(ticker=ticker)
+        scraper = YahooFinanceNewsScraper(ticker=ticker, topic=topic)
     else:
         click.echo("Unsupported source.")
         return

@@ -41,9 +41,21 @@
             "program": "${workspaceFolder}/run.py",
             "args": [
                 "embed",
-                "ticker-news",
+                "news",
                 "--ticker",
                 "${input:ticker}",
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run App: Embed Latest News",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "embed",
+                "news",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"

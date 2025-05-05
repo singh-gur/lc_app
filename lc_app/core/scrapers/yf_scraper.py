@@ -16,15 +16,17 @@ class YahooFinanceNewsScraper(NewsScraper):
         self.base_url = "https://finance.yahoo.com"
         if self.ticker:        
             self.news_url = f"{self.base_url}/quote/{self.ticker}/latest-news/"
+            self.wait_for = "div.news-stream"
         else:
             self.news_url = f"{self.base_url}/topic/{self.topic}"
+            self.wait_for = "div.topic-stream"
 
 
     async def scrape(self) -> list[Article]:
         """scrape news articles using playwright and return a list of dictionaries with the article title, url, and content."""
         content = await self.scrape_webpage(
             self.news_url,
-            wait_for="div.news-stream",
+            wait_for=self.wait_for,
         )
         if not content:
             return []
@@ -60,7 +62,7 @@ class YahooFinanceNewsScraper(NewsScraper):
     
     async def __scrape_detailed_page(self, url: str) -> str | None:
         """scrape detailed page using playwright and return the content."""
-        content = await self.scrape_webpage(url, wait_for="div.article")
+        content = await self.scrape_webpage(url, wait_for="div.article", error_on_timeout=False)
         if not content:
             return None
         soup = BeautifulSoup(content, "html.parser")

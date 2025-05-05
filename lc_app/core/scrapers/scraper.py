@@ -1,6 +1,6 @@
 import asyncio
 from abc import ABC, abstractmethod
-from playwright.async_api import async_playwright
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 from lc_app.core.scrapers.models import Article
 
 
@@ -16,7 +16,7 @@ class NewsScraper(ABC):
         """Synchronously scrape news articles and return a list of dictionaries with the article title, url, and content."""
         return asyncio.run(self.scrape())
 
-    async def scrape_webpage(self, url: str, wait_for: str) -> str:
+    async def scrape_webpage(self, url: str, wait_for: str, error_on_timeout: bool = True) -> str:
         """
         Scrape the content of a webpage using Playwright.
 
@@ -41,8 +41,18 @@ class NewsScraper(ABC):
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
             page = await browser.new_page()
-            await page.goto(url)
-            await page.wait_for_selector(wait_for)
-            content = await page.content()
-            await browser.close()
+            try:
+                await page.goto(url)
+                await page.wait_for_selector(wait_for, timeout=10000)
+                content = await page.content()
+            except PlaywrightTimeoutError as e:
+                if error_on_timeout:
+                    raise e
+                else:
+                    print(f"Error: {e}")
+                    content = None
+            finally:
+                # Ensure the page is closed even if an error occurs
+                await page.close()
+                await browser.close()
         return content
