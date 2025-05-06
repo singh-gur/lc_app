@@ -38,7 +38,7 @@ def embed_web_data(
         ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
 
     if model is None:
-        model = DEFAULT_EMBEDDING_MODEL
+        model = getenv("EMBED_MODEL", DEFAULT_EMBEDDING_MODEL)
 
     if webpage_class is None:
         webpage_class = DEFAULT_WEB_CLASS
@@ -75,7 +75,7 @@ def embed_json_data(
 ) -> None:
     """Load JSON data and create embeddings using Ollama."""
 
-    #FIXME: add jq schema to parse JSON
+    # FIXME: add jq schema to parse JSON
     loader = JSONLoader(file_path, jq_schema=".entries[]", text_content=False)
     docs = loader.load()
 
