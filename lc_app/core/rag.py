@@ -107,7 +107,7 @@ def embed_from_documents(
         ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
 
     if model is None:
-        model = DEFAULT_EMBEDDING_MODEL
+        model = getenv("EMBED_MODEL", DEFAULT_EMBEDDING_MODEL)
 
     # Initialize Ollama embeddings
     embeddings = OllamaEmbeddings(base_url=ollama_host, model=model)
@@ -128,7 +128,7 @@ def embed_from_texts(
         ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
 
     if model is None:
-        model = DEFAULT_EMBEDDING_MODEL
+        model = getenv("EMBED_MODEL", DEFAULT_EMBEDDING_MODEL)
 
     # Initialize Ollama embeddings
     embeddings = OllamaEmbeddings(base_url=ollama_host, model=model)
@@ -150,7 +150,7 @@ def run_rag_chain(
         ollama_host = getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)
 
     if embedding_model is None:
-        embedding_model = DEFAULT_EMBEDDING_MODEL
+        embedding_model = getenv("EMBED_MODEL", DEFAULT_EMBEDDING_MODEL)
 
     if llm_model is None:
         llm_model = DEFAULT_RAG_MODEL
