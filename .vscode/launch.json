@@ -56,6 +56,8 @@
             "args": [
                 "embed",
                 "news",
+                "--db-path",
+                "${input:dbPath}",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
@@ -67,6 +69,8 @@
             "program": "${workspaceFolder}/run.py",
             "args": [
                 "ask",
+                "--db-path",
+                "${input:dbPath}",
                 "--query",
                 "${input:query}"
             ],
