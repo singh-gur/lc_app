@@ -42,6 +42,8 @@
             "args": [
                 "embed",
                 "news",
+                "--db-path",
+                ".ignore/{ticker}_{month}_{day}.db",
                 "--ticker",
                 "${input:ticker}",
             ],
@@ -57,7 +59,7 @@
                 "embed",
                 "news",
                 "--db-path",
-                "${input:dbPath}",
+                ".ignore/{topic}_{month}_{day}.db",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
@@ -70,7 +72,9 @@
             "args": [
                 "ask",
                 "--query",
-                "${input:query}"
+                "${input:query}",
+                "--db-path",
+                "${input:dbPath}",
             ],
             "envFile": "${workspaceFolder}/.env",
             "console": "integratedTerminal"
@@ -81,7 +85,7 @@
             "id": "dbPath",
             "type": "promptString",
             "description": "Enter the path to the database",
-            "default": "${workspaceFolder}/.ignore/vectordb"
+            "default": ".ignore/vectordb"
         },
         {
             "id": "query",
