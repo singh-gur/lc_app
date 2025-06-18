@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright
 
 from lc_app.core.scrapers.models import Article
 from lc_app.core.scrapers.scraper import NewsScraper
@@ -14,13 +13,12 @@ class YahooFinanceNewsScraper(NewsScraper):
         self.ticker = ticker
         self.topic = topic if topic else "latest-news"
         self.base_url = "https://finance.yahoo.com"
-        if self.ticker:        
+        if self.ticker:
             self.news_url = f"{self.base_url}/quote/{self.ticker}/latest-news/"
             self.wait_for = "div.news-stream"
         else:
             self.news_url = f"{self.base_url}/topic/{self.topic}"
             self.wait_for = "div.topic-stream"
-
 
     async def scrape_news(self) -> list[Article]:
         """scrape news articles using playwright and return a list of dictionaries with the article title, url, and content."""
@@ -38,7 +36,7 @@ class YahooFinanceNewsScraper(NewsScraper):
             url = article.find("a")["href"]
             if not url.startswith("http"):
                 url = f"https://finance.yahoo.com{url}"
-            content = await self.__scrape_detailed_page(url)
+            content, _ = await self.__scrape_detailed_page(url)
             if not content:
                 content = article.find("p").get_text() if article.find("p") else ""
             source_date = article.find("div", class_=lambda x: x and "publishing" in x)
@@ -59,13 +57,17 @@ class YahooFinanceNewsScraper(NewsScraper):
                 )
             )
         return news_data
-    
-    async def __scrape_detailed_page(self, url: str) -> str | None:
+
+    async def __scrape_detailed_page(self, url: str) -> tuple[str, str] | None:
         """scrape detailed page using playwright and return the content."""
-        content = await self.scrape_webpage(url, wait_for="div.article", error_on_timeout=False)
+        content = await self.scrape_webpage(
+            url, wait_for="div.article", error_on_timeout=False
+        )
         if not content:
             return None
         soup = BeautifulSoup(content, "html.parser")
-        title = soup.find(name=("div", "h1"), class_=lambda x: x and "cover-title" in x).get_text()
-        article_body = soup.find("div", class_=lambda x:x and "body" in x).get_text()
-        return article_body
+        title = soup.find(
+            name=("div", "h1"), class_=lambda x: x and "cover-title" in x
+        ).get_text()
+        article_body = soup.find("div", class_=lambda x: x and "body" in x).get_text()
+        return article_body, title
