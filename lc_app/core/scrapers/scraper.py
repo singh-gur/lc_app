@@ -8,13 +8,9 @@ class NewsScraper(ABC):
     """A base class for news scrapers."""
 
     @abstractmethod
-    async def scrape(self) -> list[Article]:
+    async def scrape_news(self) -> list[Article]:
         """Scrape news articles and return a list of dictionaries with the article title, url, and content."""
         raise NotImplementedError("Subclasses must implement this method.")
-
-    def sync_scrape(self) -> list[Article]:
-        """Synchronously scrape news articles and return a list of dictionaries with the article title, url, and content."""
-        return asyncio.run(self.scrape())
 
     async def scrape_webpage(self, url: str, wait_for: str, error_on_timeout: bool = True) -> str:
         """

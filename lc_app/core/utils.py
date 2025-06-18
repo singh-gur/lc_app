@@ -1,4 +1,7 @@
 from datetime import datetime
+from typing import Callable, Awaitable, Any, TypeVar
+from asyncio import get_event_loop
+T = TypeVar("T")
 
 
 def hydreate_template(template_str: str, placeholders: dict[str, str]) -> str:
@@ -20,3 +23,12 @@ def hydreate_template(template_str: str, placeholders: dict[str, str]) -> str:
     )
 
     return template_str.format(**placeholders)
+
+
+def run_sync(func: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
+    """
+    Run an async function synchronously.
+    """
+
+    loop = get_event_loop()
+    return loop.run_until_complete(func(*args, **kwargs))

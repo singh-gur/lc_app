@@ -109,7 +109,7 @@ def news(
         click.echo("Unsupported source.")
         return
 
-    articles = scraper.sync_scrape()
+    articles = utils.run_sync(scraper.scrape_news)
     if not articles:
         click.echo("No articles found.")
         return

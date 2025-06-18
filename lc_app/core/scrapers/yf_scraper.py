@@ -22,7 +22,7 @@ class YahooFinanceNewsScraper(NewsScraper):
             self.wait_for = "div.topic-stream"
 
 
-    async def scrape(self) -> list[Article]:
+    async def scrape_news(self) -> list[Article]:
         """scrape news articles using playwright and return a list of dictionaries with the article title, url, and content."""
         content = await self.scrape_webpage(
             self.news_url,
@@ -66,6 +66,6 @@ class YahooFinanceNewsScraper(NewsScraper):
         if not content:
             return None
         soup = BeautifulSoup(content, "html.parser")
-        title = soup.find("div", class_=lambda x: x and "cover-title" in x).get_text()
+        title = soup.find(name=("div", "h1"), class_=lambda x: x and "cover-title" in x).get_text()
         article_body = soup.find("div", class_=lambda x:x and "body" in x).get_text()
         return article_body
