@@ -144,6 +144,7 @@ def run_rag_chain(
     search_kwargs: dict = {"k": 5},
     embedding_model: str | None = None,
     llm_model: str | None = None,
+    system_prompt: str | None = None,
 ) -> tuple:
     """Run the RAG chain with the given query and return the answer and source documents."""
     if ollama_host is None:
